@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedNexus Agent AI - Autonomous Clinical Multi-Agent Healthcare Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <div class="brand-logo" onclick="window.switchView('dashboard')">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <div>
+          <span>MED<span style="color: var(--accent-emerald-light);">NEXUS</span></span>
+          <span class="brand-pill"><span class="live-dot"></span> AGENT AI</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <button class="nav-btn active" data-view="dashboard">
+          <span>Clinical Dashboard</span>
+        </button>
+        <button class="nav-btn" data-view="history">
+          <span>Patient History</span>
+        </button>
+        <button class="nav-btn" data-view="business">
+          <span>Business Tools</span>
+          <span class="nav-badge" style="color: var(--accent-cyan);">ROI</span>
+        </button>
+        <button class="nav-btn" data-view="pricing">
+          <span>Pricing & Credits</span>
+          <span class="nav-badge" style="color: var(--accent-amber);">PayPal</span>
+        </button>
+      </nav>
+
+      <div class="nav-right">
+        <!-- Auth Buttons -->
+        <div id="auth-actions">
+          <button class="btn btn-secondary btn-sm" onclick="window.auth.openAuthModal('login')">Sign In</button>
+          <button class="btn btn-primary btn-sm" onclick="window.auth.openAuthModal('register')">Register</button>
+        </div>
+
+        <!-- Logged In Profile Pill -->
+        <div id="user-profile" class="hidden" style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="text-align: right; font-size: 0.75rem;">
+            <div id="user-display-name" style="font-weight: 700; color: #fff;">Dr. Clinician</div>
+            <div style="display: flex; align-items: center; gap: 0.35rem; justify-content: flex-end;">
+              <span id="user-credits" style="color: var(--accent-emerald-light); font-weight: 600;">50 Credits</span>
+              <span id="user-plan-badge" class="badge badge-success" style="font-size: 0.6rem; padding: 0.1rem 0.4rem;">Pro</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="window.auth.logout()">Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container" style="padding-top: 1.5rem; padding-bottom: 3rem;">
+
+    <!-- ==================== SECTION 1: CLINICAL DASHBOARD ==================== -->
+    <section id="section-dashboard">
+      <!-- Hero -->
+      <div class="hero-section">
+        <div class="hero-pill">
+          <span>⚡ Next-Generation Autonomous Clinical Decision Support</span>
+        </div>
+        <h1 class="hero-title">
+          Autonomous Clinical AI Agents <br>
+          <span class="text-gradient">Accelerating Triage & Patient Diagnosis</span>
+        </h1>
+        <p class="hero-subtitle">
+          Intelligent multimodal medical reasoning powered by Gemini AI. Extract abnormal biomarkers, identify critical CURB-65/SOFA risks, and automate physician triage alerts.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="document.getElementById('intake-card').scrollIntoView({ behavior: 'smooth' })">
+            Launch Clinical Intake
+          </button>
+          <button class="btn btn-cyan" onclick="window.switchView('business')">
+            Explore Business Tools & ROI
+          </button>
+          <button class="btn btn-secondary" onclick="window.switchView('pricing')">
+            View Plans & PayPal Billing
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Overview -->
+      <div class="stats-grid">
+        <div class="glass-card stat-item">
+          <div class="stat-header">
+            <span>Average Triage Latency</span>
+            <span>⚡</span>
+          </div>
+          <div class="stat-value">2.8s</div>
+          <div class="stat-change">↓ 94% faster than manual documentation</div>
+        </div>
+
+        <div class="glass-card stat-item">
+          <div class="stat-header">
+            <span>Clinical Accuracy</span>
+            <span>🎯</span>
+          </div>
+          <div class="stat-value">96.8%</div>
+          <div class="stat-change">ROC-AUC 0.982 benchmark</div>
+        </div>
+
+        <div class="glass-card stat-item">
+          <div class="stat-header">
+            <span>Critical Triages Dispatched</span>
+            <span>🚨</span>
+          </div>
+          <div class="stat-value">1,420</div>
+          <div class="stat-change">&lt; 3s automatic physician alerts</div>
+        </div>
+
+        <div class="glass-card stat-item">
+          <div class="stat-header">
+            <span>Doctor Hours Saved</span>
+            <span>⏳</span>
+          </div>
+          <div class="stat-value">3,850+</div>
+          <div class="stat-change">Across 142 partner clinical sites</div>
+        </div>
+      </div>
+
+      <!-- Intake & Analysis Grid -->
+      <div class="grid-2" id="intake-card">
+        <!-- Left: Intake Form -->
+        <div class="glass-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">
+            <h3 style="font-size: 1.1rem; font-weight: 700;">Patient Clinical Intake</h3>
+            <span class="badge badge-cyan">GEMINI MULTIMODAL</span>
+          </div>
+
+          <!-- Sample Cases Quick Load -->
+          <div style="margin-bottom: 1rem;">
+            <label class="form-label">Preload Clinical Case:</label>
+            <div id="sample-cases-container" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+              <!-- Populated by dashboard.js -->
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+            <div>
+              <label class="form-label">Patient Name:</label>
+              <input type="text" id="patient-name" class="form-input" placeholder="e.g., James Harrison" value="James Harrison">
+            </div>
+            <div>
+              <label class="form-label">Age:</label>
+              <input type="number" id="patient-age" class="form-input" value="58">
+            </div>
+            <div>
+              <label class="form-label">Gender:</label>
+              <select id="patient-gender" class="form-select">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Symptoms Checklist -->
+          <div class="form-group">
+            <label class="form-label">Select Presenting Symptoms:</label>
+            <div id="symptoms-checklist" style="max-height: 180px; overflow-y: auto; padding-right: 0.25rem;">
+              <!-- Populated by dashboard.js -->
+            </div>
+          </div>
+
+          <!-- Clinical Free-Text Note -->
+          <div class="form-group">
+            <label class="form-label">Clinical Admission Exam & Lab Findings:</label>
+            <textarea id="clinical-note" rows="7" class="form-textarea" placeholder="Paste physician notes, blood panels, or vital signs here..."></textarea>
+          </div>
+
+          <button type="button" id="btn-analyze" class="btn btn-primary" style="width: 100%;" onclick="window.dashboard.runAnalysis()">
+            Run Clinical AI Analysis
+          </button>
+        </div>
+
+        <!-- Right: Results Card -->
+        <div class="glass-card" id="analysis-result-container">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">
+            <h3 style="font-size: 1.1rem; font-weight: 700;">Diagnostic Evaluation</h3>
+            <span id="result-severity-badge" class="badge badge-critical">CRITICAL PRIORITY</span>
+          </div>
+
+          <!-- Automated Physician Alert Box -->
+          <div id="result-alert-box" class="alert-box alert-critical">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Primary Diagnosis -->
+          <div style="background: rgba(10, 15, 26, 0.7); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">
+              Primary Diagnostic Impression
+            </div>
+            <h4 id="result-primary-diag" style="font-size: 1.15rem; font-weight: 800; color: var(--accent-emerald-light); margin-bottom: 0.5rem;">
+              Severe Community-Acquired Bacterial Pneumonia
+            </h4>
+            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem;">
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <span style="color: var(--text-muted);">ICD-10:</span>
+                <span id="result-icd-tags">
+                  <span class="badge badge-cyan" style="font-family: var(--font-mono);">J18.9</span>
+                </span>
+              </div>
+              <span id="result-confidence" style="font-weight: 700; color: var(--accent-cyan);">94.2% AI Confidence</span>
+            </div>
+          </div>
+
+          <!-- Flagged Biomarkers -->
+          <div style="margin-bottom: 1.25rem;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.5rem;">
+              Flagged Biomarkers & Laboratory Vitals:
+            </div>
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Biomarker</th>
+                    <th>Result</th>
+                    <th>Clinical Status</th>
+                  </tr>
+                </thead>
+                <tbody id="result-biomarkers-body">
+                  <tr>
+                    <td>WBC Count</td>
+                    <td style="font-family: var(--font-mono); font-weight: 700;">18.4 x10^9/L</td>
+                    <td><span class="badge badge-critical">Critical High</span></td>
+                  </tr>
+                  <tr>
+                    <td>SpO2 (Room Air)</td>
+                    <td style="font-family: var(--font-mono); font-weight: 700;">89%</td>
+                    <td><span class="badge badge-critical">Critical Low</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Differential Diagnoses -->
+          <div style="margin-bottom: 1.25rem;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.5rem;">
+              Differential Diagnoses Candidates:
+            </div>
+            <div id="result-differentials">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Recommendations -->
+          <div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.5rem;">
+              Clinical Interventions Recommended:
+            </div>
+            <ul id="result-recommendations" style="font-size: 0.8rem; color: var(--text-secondary); padding-left: 1.25rem; line-height: 1.7;">
+              <li>Supplemental oxygen titrated to maintain SpO2 92-96%</li>
+              <li>Stat Chest Radiograph (AP/PA View)</li>
+              <li>Blood & sputum cultures prior to empiric IV antibiotic administration</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 2: PATIENT HISTORY ==================== -->
+    <section id="section-history" class="hidden">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <div>
+          <h2 style="font-size: 1.75rem; font-weight: 800;">Patient Clinical History</h2>
+          <p style="color: var(--text-secondary); font-size: 0.85rem;">Audit trail of all processed EHR reports and triage evaluations.</p>
+        </div>
+        <div style="max-width: 300px; width: 100%;">
+          <input type="text" id="history-search" class="form-input" placeholder="Search patient, diagnosis, or severity...">
+        </div>
+      </div>
+
+      <div class="glass-card" style="padding: 0;">
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Record ID</th>
+                <th>Patient</th>
+                <th>Primary Diagnosis</th>
+                <th>Triage Severity</th>
+                <th>Timestamp</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <!-- Populated by dashboard.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 3: BUSINESS TOOLS & ROI ==================== -->
+    <section id="section-business" class="hidden">
+      <div style="margin-bottom: 2rem; text-align: center;">
+        <h2 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem;">
+          Clinical ROI & Practice Efficiency Calculator
+        </h2>
+        <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+          Estimate administrative labor cost reductions, documentation turnaround time savings, and patient throughput expansion with MedNexus Agent AI.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <!-- ROI Inputs -->
+        <div class="glass-card">
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+            Clinic Parameters
+          </h3>
+
+          <div class="form-group">
+            <label class="form-label">Monthly Patient Volume:</label>
+            <input type="number" id="calc-patients" class="form-input" value="500">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Average Clinician Hourly Rate ($USD):</label>
+            <input type="number" id="calc-rate" class="form-input" value="120">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Average Minutes Spent per Manual Documentation:</label>
+            <input type="number" id="calc-minutes" class="form-input" value="25">
+          </div>
+
+          <button type="button" id="btn-calc-roi" class="btn btn-cyan" style="width: 100%;">
+            Calculate Practice Projections
+          </button>
+        </div>
+
+        <!-- ROI Projections -->
+        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+              Projected Clinic Savings
+            </h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+              <div style="background: rgba(10, 15, 26, 0.7); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Doctor Hours Saved:</div>
+                <div id="roi-hours-saved" style="font-size: 1.75rem; font-weight: 800; color: var(--accent-emerald-light); font-family: var(--font-mono);">
+                  146 hrs/mo
+                </div>
+              </div>
+
+              <div style="background: rgba(10, 15, 26, 0.7); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Estimated Monthly Savings:</div>
+                <div id="roi-monthly-savings" style="font-size: 1.75rem; font-weight: 800; color: #fff; font-family: var(--font-mono);">
+                  $17,500
+                </div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div style="background: rgba(10, 15, 26, 0.7); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Annual Projected Savings:</div>
+                <div id="roi-annual-savings" style="font-size: 1.75rem; font-weight: 800; color: var(--accent-cyan); font-family: var(--font-mono);">
+                  $210,000
+                </div>
+              </div>
+
+              <div style="background: rgba(10, 15, 26, 0.7); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Capacity Expansion:</div>
+                <div id="roi-throughput" style="font-size: 1.75rem; font-weight: 800; color: var(--accent-amber); font-family: var(--font-mono);">
+                  +42% Capacity
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+            * Based on MedNexus 70% documentation time reduction metrics across ambulatory & inpatient care cohorts.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 4: PRICING & PAYPAL ==================== -->
+    <section id="section-pricing" class="hidden">
+      <div style="margin-bottom: 2.5rem; text-align: center;">
+        <h2 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem;">
+          Clinical Subscription Plans & AI Credits
+        </h2>
+        <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+          Choose the right capacity for your practice. Instant checkout via PayPal REST API integration.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <!-- Starter Plan -->
+        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div class="badge badge-success" style="margin-bottom: 0.75rem;">STARTER</div>
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Free Clinician</h3>
+            <div style="font-size: 2.25rem; font-weight: 800; font-family: var(--font-mono); margin-bottom: 1.25rem;">
+              $0 <span style="font-size: 0.9rem; font-weight: 400; color: var(--text-muted);">/ month</span>
+            </div>
+            <ul style="font-size: 0.85rem; color: var(--text-secondary); list-style: none; space-y: 0.5rem; line-height: 2;">
+              <li>✓ 10 Clinical Analyses / month</li>
+              <li>✓ Basic EHR Note Parsing</li>
+              <li>✓ Differential Diagnosis Engine</li>
+              <li>✓ Community Support</li>
+            </ul>
+          </div>
+          <button class="btn btn-secondary" style="margin-top: 2rem;" onclick="window.auth.openAuthModal('register')">
+            Get Started Free
+          </button>
+        </div>
+
+        <!-- Pro Plan (Featured) -->
+        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between; border-color: rgba(16, 185, 129, 0.5); box-shadow: var(--shadow-glow);">
+          <div>
+            <div class="badge badge-cyan" style="margin-bottom: 0.75rem;">MOST POPULAR</div>
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Pro Clinician</h3>
+            <div style="font-size: 2.25rem; font-weight: 800; font-family: var(--font-mono); color: var(--accent-emerald-light); margin-bottom: 1.25rem;">
+              $29.99 <span style="font-size: 0.9rem; font-weight: 400; color: var(--text-muted);">/ month</span>
+            </div>
+            <ul style="font-size: 0.85rem; color: var(--text-secondary); list-style: none; line-height: 2;">
+              <li>✓ 250 Clinical Analyses / month</li>
+              <li>✓ Gemini Multimodal Reasoning</li>
+              <li>✓ Automated Emergency Physician Alerts</li>
+              <li>✓ Exportable PDF Radiology Reports</li>
+              <li>✓ Sub-second Model Latency</li>
+            </ul>
+          </div>
+          <button class="btn btn-primary" style="margin-top: 2rem;" data-plan-tier="pro">
+            Upgrade with PayPal ($29.99)
+          </button>
+        </div>
+
+        <!-- Enterprise Plan -->
+        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div class="badge badge-warning" style="margin-bottom: 0.75rem;">CLINIC SCALE</div>
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Enterprise Clinic</h3>
+            <div style="font-size: 2.25rem; font-weight: 800; font-family: var(--font-mono); margin-bottom: 1.25rem;">
+              $99.00 <span style="font-size: 0.9rem; font-weight: 400; color: var(--text-muted);">/ month</span>
+            </div>
+            <ul style="font-size: 0.85rem; color: var(--text-secondary); list-style: none; line-height: 2;">
+              <li>✓ 1,500 Clinical Analyses / month</li>
+              <li>✓ Full Practice Business Tools & ROI</li>
+              <li>✓ Custom EHR API & Webhooks</li>
+              <li>✓ Unlimited Physician Staff Seats</li>
+              <li>✓ 24/7 Dedicated Clinical SLA</li>
+            </ul>
+          </div>
+          <button class="btn btn-cyan" style="margin-top: 2rem;" data-plan-tier="enterprise">
+            Upgrade with PayPal ($99.00)
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== AUTH MODAL ==================== -->
+  <div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button class="modal-close" onclick="window.auth.closeAuthModal()">✕</button>
+
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+        <button id="tab-login" class="nav-btn active" onclick="window.auth.openAuthModal('login')">Sign In</button>
+        <button id="tab-register" class="nav-btn" onclick="window.auth.openAuthModal('register')">Register Account</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="form-login">
+        <div id="login-error" class="alert-box alert-critical hidden" style="margin-bottom: 1rem;"></div>
+        <div class="form-group">
+          <label class="form-label">Email Address:</label>
+          <input type="email" id="login-email" class="form-input" required placeholder="doctor@mednexus.org" value="doctor@mednexus.org">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password:</label>
+          <input type="password" id="login-password" class="form-input" required placeholder="••••••••" value="demo123">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="form-register" class="hidden">
+        <div id="register-error" class="alert-box alert-critical hidden" style="margin-bottom: 1rem;"></div>
+        <div class="form-group">
+          <label class="form-label">Full Name & Title:</label>
+          <input type="text" id="register-name" class="form-input" required placeholder="Dr. John Doe">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Clinic / Hospital Affiliation:</label>
+          <input type="text" id="register-clinic" class="form-input" placeholder="Metro Health System">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address:</label>
+          <input type="email" id="register-email" class="form-input" required placeholder="johndoe@hospital.org">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password:</label>
+          <input type="password" id="register-password" class="form-input" required placeholder="Create secure password">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Complete Registration</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== PAYPAL CHECKOUT MODAL ==================== -->
+  <div id="paypal-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 460px; text-align: center;">
+      <button class="modal-close" onclick="window.paypalClient.closeCheckout()">✕</button>
+
+      <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(0, 112, 186, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: #0070ba; font-size: 1.5rem; font-weight: 800;">
+        P
+      </div>
+
+      <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem;">PayPal Checkout</h3>
+      <p id="paypal-plan-title" style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
+        Pro Clinician Plan (250 Credits/mo)
+      </p>
+
+      <div style="background: rgba(10, 15, 26, 0.8); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Total Amount to Authorize:</span>
+        <span id="paypal-plan-price" style="font-size: 2rem; font-weight: 800; font-family: var(--font-mono); color: var(--accent-emerald-light);">
+          $29.99 USD
+        </span>
+      </div>
+
+      <button id="btn-paypal-confirm" class="btn btn-primary" style="width: 100%; background: #0070ba; border-color: #0070ba; box-shadow: 0 4px 15px rgba(0, 112, 186, 0.4);" onclick="window.paypalClient.executePayment()">
+        Confirm & Pay with PayPal
+      </button>
+
+      <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem;">
+        🔒 Encrypted & processed securely through PayPal REST API serverless functions.
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p style="margin-bottom: 0.5rem;">
+        <strong>MedNexus Agent AI</strong> - Clinical Decision Support Platform
+      </p>
+      <p style="color: var(--text-muted); font-size: 0.75rem;">
+        Clinical decision support simulation. All automated suggestions require validation by certified attending medical personnel.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="api.js"></script>
+  <script src="auth.js"></script>
+  <script src="dashboard.js"></script>
+  <script src="paypal.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+

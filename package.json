@@ -1,0 +1,30 @@
+{
+  "name": "mednexus-agent-ai",
+  "version": "1.0.0",
+  "description": "MedNexus Agent AI - Autonomous Clinical Multi-Agent Healthcare Platform",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx netlify-cli dev",
+    "serve": "npx serve .",
+    "build": "echo 'No build required for vanilla frontend'"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.38.0"
+  },
+  "keywords": [
+    "mednexus",
+    "healthcare-ai",
+    "clinical-agent",
+    "gemini-ai",
+    "ehr-analysis",
+    "paypal",
+    "netlify-functions"
+  ],
+  "author": "MedNexus Team",
+  "license": "MIT"
+}
+
