@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedNexus AI — Medical Device Sales Intelligence</title>
+  <meta name="description" content="AI-Powered medical device sales intelligence and quota dashboard built with Netlify Functions, Netlify Blobs, PayPal Sandbox, and Google Gemini.">
+  <link rel="stylesheet" href="/css/styles.css">
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Synthetic Demo Notice Header -->
+  <div class="disclaimer-banner">
+    <span class="badge-demo">Synthetic Demo Data</span>
+    <span>Illustrative medical device sales intelligence. Figures do not represent real clinical facilities or patients.</span>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a class="brand-logo" data-nav="landing">
+        <div class="brand-icon">M+</div>
+        <div>
+          <span class="brand-title">MedNexus AI</span>
+          <span class="brand-tagline">Medical Device Sales Intelligence</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a class="nav-link" data-nav="landing" data-target="landing">Home</a></li>
+        <li><a class="nav-link" data-nav="dashboard" data-target="dashboard">Dashboard</a></li>
+        <li><a class="nav-link" data-nav="ai" data-target="ai">AI Analysis</a></li>
+        <li><a class="nav-link" data-nav="pricing" data-target="pricing">Pricing</a></li>
+        <li><a class="nav-link" data-nav="history" data-target="history">History</a></li>
+        <li><a class="nav-link" data-nav="dataset" data-target="dataset">Dataset</a></li>
+        <li><a class="nav-link" data-nav="business-tools" data-target="business-tools">Business Tools</a></li>
+      </ul>
+
+      <!-- Unauthenticated Navigation -->
+      <div id="unauth-nav" class="nav-actions">
+        <button class="btn btn-outline btn-sm" data-nav="login">Sign In</button>
+        <button class="btn btn-primary btn-sm" data-nav="register">Register Free</button>
+      </div>
+
+      <!-- Authenticated Navigation -->
+      <div id="auth-nav" class="nav-actions" style="display: none;">
+        <div class="user-badge" data-nav="account" style="cursor:pointer;" title="View Account">
+          <span id="user-pill-name">User</span>
+          <span id="user-pill-plan" class="plan-tag free">FREE</span>
+        </div>
+        <button id="btn-logout" class="btn btn-outline btn-sm">Log Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main View Router Container -->
+  <main>
+
+    <!-- SECTION 1: LANDING PAGE -->
+    <section id="section-landing" class="view-section active">
+      <div class="hero-box">
+        <div class="hero-eyebrow">Medical Device Sales Intelligence</div>
+        <h1 class="hero-title">Precision Analytics & AI Insights for <span>Medical Device Executives</span></h1>
+        <p class="hero-desc">
+          Empowering surgical, radiological, and clinical sales teams with grounded AI recommendations, category margin trends, and hospital satisfaction intelligence.
+        </p>
+        <div class="hero-cta">
+          <button class="btn btn-accent" data-nav="dashboard">Explore Analytics Dashboard</button>
+          <button class="btn btn-outline" style="color:#ffffff;border-color:rgba(255,255,255,0.3);background:transparent;" data-nav="ai">Test AI Assistant</button>
+          <button class="btn btn-primary" data-nav="pricing">View Subscription Plans</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:3rem;">
+        <div class="card">
+          <div style="font-size:2rem;margin-bottom:0.5rem;color:#0284c7;">📊</div>
+          <h3 class="card-title">Real-Time Performance KPIs</h3>
+          <p class="card-subtitle" style="margin-top:6px;line-height:1.6;">
+            Track Cardiology, Radiology, Orthopedics, and Neurology device volumes, revenues, and regional performance trends.
+          </p>
+        </div>
+        <div class="card">
+          <div style="font-size:2rem;margin-bottom:0.5rem;color:#06b6d4;">🤖</div>
+          <h3 class="card-title">Grounded Gemini Sales Agent</h3>
+          <p class="card-subtitle" style="margin-top:6px;line-height:1.6;">
+            Ask complex queries about top-selling products and get answers strictly grounded in verifiable sales data.
+          </p>
+        </div>
+        <div class="card">
+          <div style="font-size:2rem;margin-bottom:0.5rem;color:#10b981;">💳</div>
+          <h3 class="card-title">PayPal Sandbox Integration</h3>
+          <p class="card-subtitle" style="margin-top:6px;line-height:1.6;">
+            End-to-end server-side PayPal Orders v2 integration for seamless, verified subscription plan upgrades.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: REGISTRATION PAGE -->
+    <section id="section-register" class="view-section">
+      <div style="max-width:440px;margin:2rem auto;" class="card">
+        <h2 style="color:var(--navy-900);font-size:1.5rem;font-weight:800;margin-bottom:0.25rem;">Create Your Account</h2>
+        <p style="color:var(--slate-500);font-size:0.85rem;margin-bottom:1.5rem;">Start with 3 free AI analyses on our medical device sales platform.</p>
+        
+        <div id="reg-alert" class="alert" style="display:none;"></div>
+
+        <form id="form-register">
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Full Name</label>
+            <input type="text" id="reg-name" class="form-input" placeholder="Dr. Jane Smith" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Work Email</label>
+            <input type="email" id="reg-email" class="form-input" placeholder="jane@medcenter.org" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password (min 8 characters)</label>
+            <input type="password" id="reg-password" class="form-input" placeholder="••••••••" minlength="8" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;">Create Account</button>
+        </form>
+        <p style="text-align:center;font-size:0.82rem;color:var(--slate-500);margin-top:1.25rem;">
+          Already have an account? <a data-nav="login" style="color:var(--accent-blue);font-weight:600;cursor:pointer;">Sign in</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 3: LOGIN PAGE -->
+    <section id="section-login" class="view-section">
+      <div style="max-width:440px;margin:2rem auto;" class="card">
+        <h2 style="color:var(--navy-900);font-size:1.5rem;font-weight:800;margin-bottom:0.25rem;">Sign In to MedNexus AI</h2>
+        <p style="color:var(--slate-500);font-size:0.85rem;margin-bottom:1.5rem;">Access your dashboard, analysis quotas, and subscription.</p>
+
+        <div id="login-alert" class="alert" style="display:none;"></div>
+
+        <form id="form-login">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input type="email" id="login-email" class="form-input" placeholder="you@domain.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;">Sign In</button>
+        </form>
+        <p style="text-align:center;font-size:0.82rem;color:var(--slate-500);margin-top:1.25rem;">
+          Don't have an account yet? <a data-nav="register" style="color:var(--accent-blue);font-weight:600;cursor:pointer;">Register free</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 4: MAIN ANALYTICS DASHBOARD -->
+    <section id="section-dashboard" class="view-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h2 style="font-size:1.75rem;font-weight:800;color:var(--navy-900);">Medical Device Sales Dashboard</h2>
+          <p style="font-size:0.85rem;color:var(--slate-500);">Aggregated synthetic sales performance across Q1–Q2 2024</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-outline btn-sm" data-nav="dataset">View Full Dataset</button>
+          <button class="btn btn-accent btn-sm" data-nav="ai">Ask AI Assistant</button>
+        </div>
+      </div>
+
+      <!-- KPI METRICS GRID -->
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Synthetic Revenue</div>
+          <div id="kpi-revenue" class="kpi-value">$0</div>
+          <div class="kpi-sub">Total Q1-Q2 Gross Sales</div>
+        </div>
+        <div class="kpi-card cyan">
+          <div class="kpi-label">Total Units Sold</div>
+          <div id="kpi-units" class="kpi-value">0</div>
+          <div class="kpi-sub">Medical Device Systems</div>
+        </div>
+        <div class="kpi-card emerald">
+          <div class="kpi-label">Top Selling Product</div>
+          <div id="kpi-best-product" class="kpi-value" style="font-size:1.15rem;padding-top:6px;">Loading...</div>
+          <div class="kpi-sub">Highest Gross Revenue</div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-label">Top Performing Category</div>
+          <div id="kpi-best-category" class="kpi-value" style="font-size:1.25rem;padding-top:4px;">Loading...</div>
+          <div class="kpi-sub">Leading Device Segment</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Hospital Satisfaction</div>
+          <div id="kpi-satisfaction" class="kpi-value">0.0 / 5.0</div>
+          <div class="kpi-sub">Clinical Feedback Score</div>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE CHARTS -->
+      <div class="charts-grid">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Monthly Revenue & Volume Trend</h3>
+              <span class="card-subtitle">Monthly sales volume and revenue progression</span>
+            </div>
+          </div>
+          <div class="chart-box">
+            <canvas id="chart-monthly"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Sales by Product Category</h3>
+              <span class="card-subtitle">Revenue distribution across clinical specialties</span>
+            </div>
+          </div>
+          <div class="chart-box">
+            <canvas id="chart-category"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Top Products by Revenue</h3>
+              <span class="card-subtitle">Gross revenue performance per device SKU</span>
+            </div>
+          </div>
+          <div class="chart-box">
+            <canvas id="chart-products"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Customer Satisfaction Score</h3>
+              <span class="card-subtitle">Hospital clinician ratings (out of 5.0)</span>
+            </div>
+          </div>
+          <div class="chart-box">
+            <canvas id="chart-satisfaction"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: AI ANALYSIS PAGE -->
+    <section id="section-ai" class="view-section">
+      <div style="margin-bottom:1.5rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+          <div>
+            <h2 style="font-size:1.75rem;font-weight:800;color:var(--navy-900);">AI Medical Device Sales Assistant</h2>
+            <p style="font-size:0.85rem;color:var(--slate-500);">Grounded natural-language intelligence powered by Google Gemini</p>
+          </div>
+          <span id="ai-quota-badge" class="badge-demo" style="background:#0284c7;font-size:0.8rem;padding:6px 14px;">
+            Quota: Loading...
+          </span>
+        </div>
+      </div>
+
+      <div class="ai-panel">
+        <div>
+          <div class="card" style="margin-bottom:1.5rem;">
+            <h4 style="color:var(--navy-900);font-size:0.95rem;font-weight:700;margin-bottom:0.75rem;">Example Questions</h4>
+            <div class="prompt-chips">
+              <button class="chip-btn">"Which medical device generated the highest total revenue in Q1 and Q2 2024?"</button>
+              <button class="chip-btn">"Compare Cardiology versus Radiology sales and customer satisfaction."</button>
+              <button class="chip-btn">"What is the average satisfaction score for the TitanSpine Lumbar Cage Kit?"</button>
+              <button class="chip-btn">"Which sales region had the greatest demand for VitalsCheck Hubs?"</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4 style="color:var(--navy-900);font-size:0.9rem;font-weight:700;margin-bottom:0.5rem;">Grounding Notice</h4>
+            <p style="font-size:0.8rem;color:var(--slate-600);line-height:1.5;">
+              The AI assistant is strictly grounded in the verified synthetic sales records. If a query requests data not present in this dataset, it will decline to fabricate answers.
+            </p>
+          </div>
+        </div>
+
+        <div class="ai-output-box">
+          <div id="ai-alert" class="alert" style="display:none;"></div>
+
+          <form id="form-ai-query" style="margin-bottom:1.5rem;">
+            <div class="form-group">
+              <label class="form-label" for="ai-prompt-input">Enter your sales or product intelligence query:</label>
+              <textarea id="ai-prompt-input" class="form-textarea" rows="3" placeholder="e.g. What were the top revenue drivers in May and June 2024?" required></textarea>
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <button type="submit" id="btn-ai-submit" class="btn btn-primary">Run AI Analysis</button>
+            </div>
+          </form>
+
+          <div style="border-top:1px solid var(--border-light);padding-top:1.25rem;flex:1;">
+            <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;color:var(--slate-400);margin-bottom:0.75rem;letter-spacing:0.04em;">
+              Analysis Output
+            </div>
+            <div id="ai-output-text" class="ai-response-content">
+              <p style="color:var(--slate-400);">Submit a question above to receive grounded sales insights from MedNexus AI.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: PRICING & UPGRADE PAGE -->
+    <section id="section-pricing" class="view-section">
+      <div style="text-align:center;max-width:700px;margin:1rem auto 2.5rem auto;">
+        <h2 style="font-size:2rem;font-weight:800;color:var(--navy-900);">Transparent, Predictable Pricing</h2>
+        <p style="color:var(--slate-600);font-size:0.95rem;margin-top:0.5rem;">
+          Choose the right quota for your sales and clinical research teams. Test full PayPal Sandbox checkout with immediate activation.
+        </p>
+        <div class="alert alert-info" style="margin-top:1.25rem;text-align:left;font-size:0.82rem;">
+          <strong>PayPal Sandbox Test Mode:</strong> These transactions run on PayPal's Sandbox API environment. No real money or credit card charges will occur.
+        </div>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- FREE TIER -->
+        <div class="pricing-card">
+          <div class="plan-name">Free Tier</div>
+          <p style="font-size:0.82rem;color:var(--slate-500);">Introductory access to explore synthetic device metrics.</p>
+          <div class="plan-price">$0 <span>/ month</span></div>
+          <ul class="plan-features">
+            <li>3 AI analyses per billing period</li>
+            <li>Synthetic demo dataset access</li>
+            <li>Basic dashboard KPI charts</li>
+            <li>Community support</li>
+          </ul>
+          <button class="btn btn-outline" style="margin-top:auto;" data-nav="register">Current Free Plan</button>
+        </div>
+
+        <!-- BASIC TIER -->
+        <div class="pricing-card featured">
+          <div class="badge-popular">Popular Choice</div>
+          <div class="plan-name">Basic Plan</div>
+          <p style="font-size:0.82rem;color:var(--slate-500);">For active medical sales representatives and analysts.</p>
+          <div class="plan-price">$19 <span>/ month</span></div>
+          <ul class="plan-features">
+            <li>10 AI analyses per billing period</li>
+            <li>Full interactive analytics dashboard</li>
+            <li>Persistent query history</li>
+            <li>PayPal Sandbox checkout</li>
+          </ul>
+          <div id="paypal-button-container-basic" style="margin-top:auto;min-height:50px;"></div>
+        </div>
+
+        <!-- PRO TIER -->
+        <div class="pricing-card">
+          <div class="plan-name">Pro Plan</div>
+          <p style="font-size:0.82rem;color:var(--slate-500);">For medical device commercial leadership and directors.</p>
+          <div class="plan-price">$49 <span>/ month</span></div>
+          <ul class="plan-features">
+            <li>50 AI analyses per billing period</li>
+            <li>All Basic features included</li>
+            <li>Deep categorical breakdown</li>
+            <li>Advanced intelligence models</li>
+          </ul>
+          <div id="paypal-button-container-pro" style="margin-top:auto;min-height:50px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: ACCOUNT & SUBSCRIPTION PAGE -->
+    <section id="section-account" class="view-section">
+      <div style="max-width:700px;margin:1rem auto;">
+        <h2 style="font-size:1.75rem;font-weight:800;color:var(--navy-900);margin-bottom:1.5rem;">Account & Subscription</h2>
+
+        <div class="card" style="margin-bottom:1.5rem;">
+          <h3 class="card-title" style="margin-bottom:1rem;">Profile Information</h3>
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:12px;font-size:0.9rem;">
+            <span style="color:var(--slate-500);font-weight:600;">Name:</span>
+            <span id="account-name" style="color:var(--navy-900);font-weight:600;">Loading...</span>
+
+            <span style="color:var(--slate-500);font-weight:600;">Email:</span>
+            <span id="account-email" style="color:var(--navy-900);">Loading...</span>
+
+            <span style="color:var(--slate-500);font-weight:600;">Current Plan:</span>
+            <span id="account-plan" style="color:var(--accent-blue);font-weight:700;">Loading...</span>
+
+            <span style="color:var(--slate-500);font-weight:600;">AI Usage:</span>
+            <span id="account-usage" style="color:var(--navy-900);">Loading...</span>
+
+            <span style="color:var(--slate-500);font-weight:600;">Billing Period:</span>
+            <span id="account-reset" style="color:var(--slate-600);">Loading...</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:0.75rem;">Manage Plan</h3>
+          <p style="font-size:0.85rem;color:var(--slate-600);margin-bottom:1.25rem;">
+            Need more analyses? Upgrade seamlessly using PayPal Sandbox to test higher-tier quotas.
+          </p>
+          <button class="btn btn-primary btn-sm" data-nav="pricing">Upgrade Plan</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 8: ANALYSIS HISTORY -->
+    <section id="section-history" class="view-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h2 style="font-size:1.75rem;font-weight:800;color:var(--navy-900);">Analysis History</h2>
+          <p style="font-size:0.85rem;color:var(--slate-500);">Review previous sales intelligence queries and AI outputs</p>
+        </div>
+        <button class="btn btn-outline btn-sm" data-nav="ai">+ New Analysis</button>
+      </div>
+
+      <div id="history-list">
+        <p style="color:var(--slate-500);text-align:center;padding:2rem;">Loading analysis history...</p>
+      </div>
+    </section>
+
+    <!-- SECTION 9: DATASET INFORMATION PAGE -->
+    <section id="section-dataset" class="view-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h2 style="font-size:1.75rem;font-weight:800;color:var(--navy-900);">Medical Device Sales Dataset</h2>
+          <p style="font-size:0.85rem;color:var(--slate-500);">Explore existing records or upload your own CSV / JSON sales data</p>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:center;">
+          <input type="file" id="dataset-file-input" accept=".csv,.json" style="display:none;">
+          <button class="btn btn-outline btn-sm" id="btn-export-dataset">Export JSON</button>
+          <button class="btn btn-primary btn-sm" id="btn-upload-dataset" onclick="document.getElementById('dataset-file-input').click();">
+            📤 Upload Dataset (.csv / .json)
+          </button>
+        </div>
+      </div>
+
+      <div id="dataset-upload-status" class="alert" style="display:none;margin-bottom:1rem;"></div>
+
+      <div class="alert alert-warning" style="margin-bottom:1.5rem;">
+        <strong>SYNTHETIC DEMO DATASET NOTICE:</strong> Default records below are synthetically generated for demonstration and evaluation purposes. You can upload custom CSV/JSON files using the button above to analyze your own healthcare sales records.
+      </div>
+
+      <div class="card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Transaction ID</th>
+                <th>Month</th>
+                <th>Category</th>
+                <th>Product Name</th>
+                <th>Region</th>
+                <th>Units</th>
+                <th>Unit Price</th>
+                <th>Gross Revenue</th>
+                <th>Satisfaction</th>
+              </tr>
+            </thead>
+            <tbody id="dataset-table-body">
+              <tr><td colspan="9" style="text-align:center;">Loading dataset records...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- MedNexus AI add-on modules: kept isolated from existing views -->
+    <section id="section-business-tools" class="view-section">
+      <div class="page-header">
+        <h1 class="page-title">MedNexus Business Intelligence</h1>
+        <p class="page-subtitle">After-sales service, pricing scenarios, and business alerts.</p>
+      </div>
+      <div class="card" style="margin-bottom:1.25rem;">
+        <h2 class="card-title">After-Sales & Service Intelligence</h2>
+        <p class="card-subtitle" style="margin-bottom:1rem;">Track service dates, warranty, and device maintenance.</p>
+        <form id="form-service" class="form-grid">
+          <div class="form-group"><label class="form-label">Customer / facility *</label><input id="service-customer" class="form-input" required></div>
+          <div class="form-group"><label class="form-label">Device / product *</label><input id="service-device" class="form-input" required></div>
+          <div class="form-group"><label class="form-label">Serial number</label><input id="service-serial" class="form-input"></div>
+          <div class="form-group"><label class="form-label">Service type</label><input id="service-type" class="form-input" placeholder="Preventive maintenance"></div>
+          <div class="form-group"><label class="form-label">Service due date *</label><input id="service-due" class="form-input" type="date" required></div>
+          <div class="form-group"><label class="form-label">Warranty until</label><input id="service-warranty" class="form-input" type="date"></div>
+          <div class="form-group" style="grid-column:1/-1"><label class="form-label">Notes</label><textarea id="service-notes" class="form-input" rows="2"></textarea></div>
+          <button class="btn btn-primary" type="submit">Save Service Record</button>
+        </form>
+        <div id="service-list" class="tool-list"></div>
+      </div>
+      <div class="card" style="margin-bottom:1.25rem;">
+        <h2 class="card-title">Profit Margin & Pricing Simulator</h2>
+        <p class="card-subtitle" style="margin-bottom:1rem;">Estimate gross margin using your own cost, price, and discount assumptions.</p>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">Unit cost (IDR)</label><input id="price-cost" class="form-input" type="number" min="0" value="1000000"></div>
+          <div class="form-group"><label class="form-label">Selling price (IDR)</label><input id="price-sale" class="form-input" type="number" min="0" value="1500000"></div>
+          <div class="form-group"><label class="form-label">Discount (%)</label><input id="price-discount" class="form-input" type="number" min="0" max="100" value="0"></div>
+          <div class="form-group"><label class="form-label">Units</label><input id="price-units" class="form-input" type="number" min="0" value="1"></div>
+        </div>
+        <div id="price-result" class="tool-result" aria-live="polite"></div>
+      </div>
+      <div class="card" style="margin-bottom:1.25rem;">
+        <h2 class="card-title">What-If Business Simulator</h2>
+        <p class="card-subtitle" style="margin-bottom:1rem;">Compare a revenue/cost scenario. Estimates are not guarantees.</p>
+        <form id="form-scenario" class="form-grid">
+          <div class="form-group"><label class="form-label">Scenario name</label><input id="scenario-name" class="form-input" value="Next quarter plan"></div>
+          <div class="form-group"><label class="form-label">Base revenue (IDR)</label><input id="scenario-revenue" class="form-input" type="number" min="0" value="100000000"></div>
+          <div class="form-group"><label class="form-label">Revenue change (%)</label><input id="scenario-revenue-change" class="form-input" type="number" value="10"></div>
+          <div class="form-group"><label class="form-label">Base cost (IDR)</label><input id="scenario-cost" class="form-input" type="number" min="0" value="65000000"></div>
+          <div class="form-group"><label class="form-label">Cost change (%)</label><input id="scenario-cost-change" class="form-input" type="number" value="5"></div>
+          <div class="form-group"><label class="form-label">Discount (%)</label><input id="scenario-discount" class="form-input" type="number" min="0" max="100" value="0"></div>
+          <button class="btn btn-primary" type="submit">Calculate & Save Scenario</button>
+        </form>
+        <div id="scenario-result" class="tool-result" aria-live="polite"></div>
+        <div id="scenario-list" class="tool-list"></div>
+      </div>
+      <div class="card">
+        <h2 class="card-title">Smart Business Alerts</h2>
+        <p class="card-subtitle" style="margin-bottom:1rem;">Set threshold alerts. These appear in this dashboard; email/SMS delivery requires a separate notification integration.</p>
+        <form id="form-alert" class="form-grid">
+          <div class="form-group"><label class="form-label">Alert name *</label><input id="alert-title" class="form-input" required></div>
+          <div class="form-group"><label class="form-label">Metric *</label><input id="alert-metric" class="form-input" required placeholder="Monthly sales"></div>
+          <div class="form-group"><label class="form-label">Condition</label><select id="alert-operator" class="form-input"><option value="below">Alert if below</option><option value="above">Alert if above</option></select></div>
+          <div class="form-group"><label class="form-label">Threshold</label><input id="alert-threshold" class="form-input" type="number" required></div>
+          <div class="form-group"><label class="form-label">Current value</label><input id="alert-current" class="form-input" type="number" required></div>
+          <button class="btn btn-primary" type="submit">Create Alert</button>
+        </form>
+        <div id="alert-list" class="tool-list"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Payment Modal for PayPal Capture -->
+  <div id="payment-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div id="payment-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div>
+        <strong>MedNexus AI</strong> — Medical Device Sales Intelligence Platform
+        <div style="font-size:0.75rem;margin-top:2px;">Built for Netlify + PayPal Sandbox + Google Gemini. Zero Supabase.</div>
+      </div>
+      <div>
+        <span class="badge-demo">Synthetic Demo Data Only</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Modules -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
